@@ -2,6 +2,11 @@
 
 /** CanvasDataCollector and related classes */
 
+use TiBeN\CrontabManager\CrontabAdapter as CrontabAdapter;
+use TiBeN\CrontabManager\CrontabRepository as CrontabRepository;
+use TiBeN\CrontabManager\CrontabJob as CrontabJob;
+
+
 /**
  * An object-oriented approach to scheduling regular data collection from
  * Canvas.
@@ -93,7 +98,7 @@ abstract class CanvasDataCollector {
 						$created = true;
 						foreach($queries as $query) {
 							if (!empty(trim($query))) {
-								if (!$this->$sql->query($query)) {
+								if (!$this->sql->query($query)) {
 									$this->log("MySQL error while trying to create data collection tables: {$this->sql->error}");
 								}
 							}
