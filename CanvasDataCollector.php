@@ -99,7 +99,7 @@ abstract class CanvasDataCollector {
 						foreach($queries as $query) {
 							if (!empty(trim($query))) {
 								if (!$this->sql->query($query)) {
-									$this->log("MySQL error while trying to create data collection tables: {$this->sql->error}");
+									$this->log->log("MySQL error while trying to create data collection tables: {$this->sql->error}");
 								}
 							}
 						}
