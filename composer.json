@@ -2,7 +2,9 @@
     "name": "smtech/canvasdatacollector",
     "description": "An object-oriented approach to scheduling regular data collection from Canvas",
     "require": {
-        "smtech/canvaspest": "1.*"
+        "smtech/canvaspest": "~1.0",
+        "pear/log": "~1.0",
+        "tiben/crontab-manager": "~1.0"
     },
     "license": "LGPL-3.0",
     "authors": [
@@ -11,5 +13,8 @@
             "email": "sethbattis@stmarksschool.org"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "classmap": [""]
+    }
 }
