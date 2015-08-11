@@ -13,6 +13,7 @@ abstract class AutoCrontabJob {
 	
 	/** @var \TiBeN\CrontabManager\CrontabRepository	Crontab management */
 	private $cron = null;
+	
 	/**
 	 * Construct a new AutoCrontabJob
 	 *
@@ -47,16 +48,23 @@ abstract class AutoCrontabJob {
 			
 			/* update cron if this job already exists */
 			$this->cron = new \TiBeN\CrontabManager\CrontabRepository(new \TiBeN\CrontabManager\CrontabAdapter());
-			if (!empty($results = $this->cron->findJobByRegex("/$_identifier/"))) {
-				$job = $results[0];
-				$job->minutes = $newJob->minutes;
-				$job->hours = $newJob->hours;
-				$job->dayOfMonth = $newJob->dayOfMonth;
-				$job->months = $newJob->months;
-				$job->dayOfWeek = $newJob->dayOfWeek;
+			$jobs = $this->cron->getJobs();
+			$jobExists = false;
+			// TODO Rewrite whenever this is fixed: https://github.com/TiBeN/CrontabManager/issues/3
+			foreach ($jobs as $job) {
+				if (preg_match("/$_identifier/", $job->formatCrontabLine())) {
+					$jobExists = true;
+					$job->minutes = $newJob->minutes;
+					$job->hours = $newJob->hours;
+					$job->dayOfMonth = $newJob->dayOfMonth;
+					$job->months = $newJob->months;
+					$job->dayOfWeek = $newJob->dayOfWeek;
+					break;
+				}
+			}
 			
 			/* ... or add this as a new job if it doesn't exist */
-			} else {
+			if (!$jobExists) {
 				$this->cron->addJob($newJob);
 			}
 			
