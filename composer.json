@@ -1,20 +1,20 @@
 {
-    "name": "smtech/canvasdatacollector",
-    "description": "An object-oriented approach to scheduling regular data collection from Canvas",
+    "name": "battis/autocrontabjob",
+    "description": "An object-oriented approach to scheduling regular cron jobs automatically",
     "require": {
-        "smtech/canvaspest": "~1.0",
-        "pear/log": "~1.0",
         "tiben/crontab-manager": "~1.0"
     },
     "license": "LGPL-3.0",
     "authors": [
         {
             "name": "Seth Battis",
-            "email": "sethbattis@stmarksschool.org"
+            "email": "seth@battis.net"
         }
     ],
     "minimum-stability": "dev",
     "autoload": {
-        "classmap": [""]
+        "psr-4": {
+	        "Battis\\": "" 
+        }
     }
 }
