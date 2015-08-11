@@ -11,19 +11,26 @@ namespace Battis;
  **/
 abstract class AutoCrontabJob {
 	
-	/** @var \TiBeN\CrontabManager\CrontabRepository	Crontab management */
+	/** @var \TiBeN\CrontabManager\CrontabRepository Crontab management */
 	private $cron = null;
+	
+	/** @var \Log A Pear Log handle */
+	protected $log = null;
 	
 	/**
 	 * Construct a new AutoCrontabJob
 	 *
 	 * @param string $identifier Hopefully unique!
 	 * @param string $script Path to data collection script (probably `__FILE__`)
-	 * @param string|TiBeN\CrontabManager\CrontabJob Cron schedule or a complete TiBeN\CrontabManager\CrontabJob
+	 * @param string|TiBeN\CrontabManager\CrontabJob Cron schedule or a complete
+	 *		`TiBeN\CrontabManager\CrontabJob`
+	 * @param string (Optional) path to log file (defaults to same directory and
+	 *		name as the script file) e.g. a script at `/var/www/foo/bar.php` would
+	 *		have a log at `/var/www/foo/bar.log`
 	 *
 	 * @throws AutoCrontabJob_Exception CONSTRUCTOR_ERROR If parameters are not validated
 	 **/
-	public function __construct($identifier, $script, $schedule) {
+	public function __construct($identifier, $script, $schedule, $log = null) {
 		
 		/* Make sure the scheduled script file exists... */
 		if (file_exists($script)) {
@@ -68,6 +75,12 @@ abstract class AutoCrontabJob {
 				$this->cron->addJob($newJob);
 			}
 			
+			/* set up log file */
+			if (empty($log)) {
+				$log = dirname($script) . '/' . basename($script, '.php') . '.log';
+			}
+			$this->log = \Log::singleton('file', $log);
+						
 			/* update cron to enable scheduled jobs */
 			$this->cron->persist();
 			
