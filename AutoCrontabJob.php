@@ -13,14 +13,15 @@ abstract class AutoCrontabJob {
 	
 	/** @var \TiBeN\CrontabManager\CrontabRepository	Crontab management */
 	private $cron = null;
+	
 	/**
-	 * Construct a new CanvasDataCollector
+	 * Construct a new AutoCrontabJob
 	 *
 	 * @param string $identifier Hopefully unique!
 	 * @param string $script Path to data collection script (probably `__FILE__`)
 	 * @param string|TiBeN\CrontabManager\CrontabJob Cron schedule or a complete TiBeN\CrontabManager\CrontabJob
 	 *
-	 * @throws CanvasDataCollector_Exception CONSTRUCTOR_ERROR If parameters are not validated
+	 * @throws AutoCrontabJob_Exception CONSTRUCTOR_ERROR If parameters are not validated
 	 **/
 	public function __construct($identifier, $script, $schedule) {
 		
@@ -28,13 +29,13 @@ abstract class AutoCrontabJob {
 		if (file_exists($script)) {
 			
 			/* try to make the identifier truly unique to this instance */
-			$_identifier  = $identifier . '.' . md5($identifier . $schema . $log . __FILE__ . __CLASS__);
+			$_identifier  = $identifier . '.' . md5($identifier . __FILE__ . __CLASS__);
 			
 			/* ensure that we're working with a valid Cron job */
 			$newJob = null;
 			if (is_string($schedule)) {
-				$newJob = TiBeN\CrontabManager\CrontabJob::createFromCrontabLine($schedule . " php $script");
-			} elseif ($schedule instanceof TiBeN\CrontabManager\CrontabJob) {
+				$newJob = \TiBeN\CrontabManager\CrontabJob::createFromCrontabLine($schedule . " php $script");
+			} elseif ($schedule instanceof \TiBeN\CrontabManager\CrontabJob) {
 				$newJob = $schedule;
 			} else {
 				throw new CanvasDataCollector_Exception(
@@ -42,11 +43,11 @@ abstract class AutoCrontabJob {
 					CanvasDataCollector_Exception::CONSTRUCTOR_ERROR
 				);
 			}
-			$newJob->comments = implode(' ', array($newJob->comments, "[Created by CanvasDataCollector (Job ID $_identifier) " . date('Y-m-d h:ia')  . ']'));
+			$newJob->comments = implode(' ', array($newJob->comments, "Created by $script:" . get_class($this) . ' ' . date('Y-m-d h:ia') . " (Job ID $_identifier)"));
 
 			
 			/* update cron if this job already exists */
-			$this->cron = new TiBeN\CrontabManager\CrontabRepository(new TiBeN\CrontabManager\CrontabAdapter());
+			$this->cron = new \TiBeN\CrontabManager\CrontabRepository(new \TiBeN\CrontabManager\CrontabAdapter());
 			if (!empty($results = $this->cron->findJobByRegex("/$_identifier/"))) {
 				$job = $results[0];
 				$job->minutes = $newJob->minutes;
@@ -58,17 +59,6 @@ abstract class AutoCrontabJob {
 			/* ... or add this as a new job if it doesn't exist */
 			} else {
 				$this->cron->addJob($newJob);
-			}
-			
-			/* set up logging */
-			if (is_string($log)) {
-				$this->log = Log::singleton('file', $log);
-				if (!($this->log instanceof Log)) {
-					throw new CanvasDataCollector_Exception(
-						"Invalid log file location '$log'",
-						CanvasDataCollector_Exception::CONSTRUCTOR_ERROR
-					);
-				}
 			}
 			
 			/* update cron to enable scheduled jobs */
@@ -95,15 +85,12 @@ abstract class AutoCrontabJob {
 /**
  * All exceptions thrown by AutoCrontabJob
  *
- * @author Seth Battis <SethBattis@stmarksschool.org>
+ * @author Seth Battis <seth@battis.net>
  **/
 class AutoCrontabJob_Exception extends \Exception {
 
 	/** Error constructing CanvasDataCollector */
 	const CONSTRUCTOR_ERROR = 1;
-	
-	/** Error making a MySQL query */
-	const MYSQL_ERROR = 2;
 }
 	
 ?>
