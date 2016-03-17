@@ -1,5 +1,7 @@
 # AutoCrontabJob
 
+[![Latest Version](https://img.shields.io/packagist/v/battis/autocrontabjob.svg)](https://packagist.org/packages/battis/autocrontabjob)
+
 An object-oriented approach to scheduling regular cron jobs automatically
 
 ### Install
