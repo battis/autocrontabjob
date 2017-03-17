@@ -99,4 +99,3 @@ abstract class AutoCrontabJob
      **/
     abstract public function scheduledJob();
 }
-

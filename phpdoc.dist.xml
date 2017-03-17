@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpdoc>
-	<title>CanvasDataCollector</title>
+	<title>AutoCrontabJob</title>
 	<parser>
 		<target>phpdoc</target>
 	</parser>
@@ -11,6 +11,6 @@
 		<template name="responsive"/>
 	</transformation>
 	<files>
-		<directory>.</directory>
+		<directory>src</directory>
 	</files>
 </phpdoc>
